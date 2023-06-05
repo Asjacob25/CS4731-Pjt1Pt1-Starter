@@ -12,6 +12,7 @@
         void main() {
             gl_Position = vPosition;
             fColor = vColor;			// Pass point color to fragment shader
+            gl_PointSize = 10.0;
         }
     </script>
 
@@ -43,8 +44,9 @@
         Please use a browser that supports the "canvas" tag.
     </canvas>
 
-    <form id="fileupload" enctype="multipart/form-data">
-        <input type="file" id="files" name="files[]" />
+    <form id="fileupload" enctype="multipart/form-data" method="post">
+        <input type="file" id="files" name="files[]" onchange="renderFile"/>
+        <button type="submit">submit</button>
     </form>
 
 </div>
