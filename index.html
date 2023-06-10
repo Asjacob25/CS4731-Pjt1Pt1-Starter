@@ -8,11 +8,13 @@
         attribute vec4 vPosition;
         attribute vec4 vColor;
         varying vec4 fColor;
+        //attribute mat4 modelMatrix;
+        uniform mat4 projMatrix;
 
         void main() {
-            gl_Position = vPosition;
+            gl_Position = projMatrix * vPosition;
             fColor = vColor;			// Pass point color to fragment shader
-            gl_PointSize = 10.0;
+            //gl_PointSize = 10.0;
         }
     </script>
 
@@ -44,9 +46,8 @@
         Please use a browser that supports the "canvas" tag.
     </canvas>
 
-    <form id="fileupload" enctype="multipart/form-data" method="post">
-        <input type="file" id="files" name="files[]" onchange="renderFile"/>
-        <button type="submit">submit</button>
+    <form id="fileupload" enctype="multipart/form-data">
+        <input type="file" id="files" name="files[]" />
     </form>
 
 </div>
