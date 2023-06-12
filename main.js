@@ -2,14 +2,18 @@ let program = null;
 let gl = null;
 let canvas = null;
 let viewBox= [];
+let drag = false;
+let width = null;
+let height = null;
+let dragx = 0;
+let dragy = 0;
+let start =0;
+
 function main()
 {
      //Retrieve <canvas> element
     canvas = document.getElementById('webgl');
     gl = WebGLUtils.setupWebGL(canvas, undefined);
-
-    //Get the rendering context for WebGL
-
 
     //Check that the return value is not null.
     if (!gl)
@@ -20,9 +24,6 @@ function main()
     program = initShaders(gl, "vshader", "fshader");
     gl.useProgram(program);
     gl.viewport(0,0,400,400);
-
-
-
 
 
     document.getElementById("files").addEventListener("change",
@@ -41,18 +42,8 @@ function main()
                 var points = pointsAndColors[0];
                 var colors = pointsAndColors[1];
 
-
-
-                /*for (let i = 0; i < pointsAndColors.length; i++) {
-                    points.push(vec4(pointsAndColors[0][i][0], pointsAndColors[0][i][1], 0.0, 1.0));
-                }
-                var colors = [];
-                for (let i = 0; i < pointsAndColors.length; i++) {
-                    colors.push(vec4(pointsAndColors[1][i][0], pointsAndColors[1][i][1], pointsAndColors[1][i][2], pointsAndColors[1][i][3]));
-                }*/
-
-                let width = viewBox[2];
-                let height = viewBox[3]
+                width = viewBox[2];
+                height = viewBox[3]
 
                 //console.log(viewBox);
 
@@ -71,18 +62,33 @@ function main()
                 gl.uniformMatrix4fv(projMatrixLoc, false, flatten(projMatrix));
 
 
+                canvas.addEventListener('mousedown', (evt) =>{
+
+                    start = {x: evt.clientX, y:evt.clientY};
+                });
+
+                canvas.addEventListener('mousemove', (evt)=>{
+                    if(evt.buttons === 1){
+                        const current = {x:evt.clientX, y: evt.clientY};
+                        dragx=((current.x-start.x) *width)/canvas.width;
+                        dragy=((current.y-start.y) *height)/canvas.height;
+                        //start=current;
+                        render(points, colors);
+                    }
+                });
 
                 render(points, colors);
             }
         });
 
-
-
-    // Initialize shaders
-    // Get the rendering context for WebGL
-    //let gl = WebGLUtils.setupWebGL(canvas, undefined);
 }
+
+
 function render(points, colors) {
+    const translateMatrix = translate(dragx, dragy, 0);
+    const modelMatrix = gl.getUniformLocation(program, "modelMatrix");
+    gl.uniformMatrix4fv(modelMatrix, false, flatten(translateMatrix));
+
     console.log(points);
     console.log(colors);
     var vBuffer = gl.createBuffer();
@@ -104,6 +110,8 @@ function render(points, colors) {
 
 
     gl.drawArrays(gl.LINES, 0, points.length);
+
+
 
 }
 
