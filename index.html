@@ -12,7 +12,7 @@
         uniform mat4 projMatrix;
 
         void main() {
-            gl_Position = projMatrix *modelMatrix* vPosition;
+            gl_Position = projMatrix *modelMatrix* vPosition ;
             fColor = vColor;			// Pass point color to fragment shader
             //gl_PointSize = 10.0;
         }

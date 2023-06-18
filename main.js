@@ -8,6 +8,9 @@ let height = null;
 let dragx = 0;
 let dragy = 0;
 let start =0;
+let angle = 0;
+let fMatrix;
+let scaleFactor=1;
 
 function main()
 {
@@ -72,10 +75,43 @@ function main()
                         const current = {x:evt.clientX, y: evt.clientY};
                         dragx=((current.x-start.x) *width)/canvas.width;
                         dragy=((current.y-start.y) *height)/canvas.height;
+                        gl.clear(gl.COLOR_BUFFER_BIT);
                         //start=current;
                         render(points, colors);
                     }
                 });
+
+                canvas.addEventListener("onwheel" in document ? "wheel" : "mousewheel", function(e) {
+                    //console.log(e.deltaX);
+                    console.log(e.deltaY);
+
+                    if( e.deltaY<0 ){
+
+                        if(angle===360){
+                            angle=0;
+                        }else{
+                            angle+=1;
+                        }
+
+                    } else {
+
+                        if(angle===-360){
+                            angle=0;
+                        }else{
+                            angle-=1;
+                        }
+                    }
+                    render(points, colors);
+                });
+                canvas.addEventListener("onwheel" in document ? "wheel" : "mousewheel", function(e) {
+                    if(e.deltaY<0 && scale<10){
+                        scaleFactor+=0.1;
+                    }else if(e.deltaY>0&& scale>0.1){
+                        scaleFactor-=0.1;
+                    }
+                    render(points,colors);
+                });
+
 
                 render(points, colors);
             }
@@ -85,9 +121,17 @@ function main()
 
 
 function render(points, colors) {
-    const translateMatrix = translate(dragx, dragy, 0);
+    let translateMatrix = translate(width/2 + viewBox[0], height/2 + viewBox[1], 0);
+    let btranslateMatrix = translate(-(width/2+viewBox[0]), -(height/2+viewBox[1]), 0);
+    const dtranslateMatrix = translate(dragx, dragy, 0);
+    const rotateMatrix = rotate(angle, [0, 0, 1]);
+    const scaleMatrix = scalem(scaleFactor, scaleFactor, 1);
+    fMatrix = mult(translateMatrix, scaleMatrix);
+    fMatrix = mult(fMatrix, rotateMatrix);
+    fMatrix = mult(fMatrix, dtranslateMatrix);
+    fMatrix = mult(fMatrix, btranslateMatrix);
     const modelMatrix = gl.getUniformLocation(program, "modelMatrix");
-    gl.uniformMatrix4fv(modelMatrix, false, flatten(translateMatrix));
+    gl.uniformMatrix4fv(modelMatrix, false, flatten(fMatrix));
 
     console.log(points);
     console.log(colors);
@@ -110,9 +154,6 @@ function render(points, colors) {
 
 
     gl.drawArrays(gl.LINES, 0, points.length);
-
-
-
 }
 
 
