@@ -101,16 +101,28 @@ function main()
                             angle-=1;
                         }
                     }
+                    if(e.deltaY<0 && scaleFactor<10){
+                        console.log("hi");
+                        scaleFactor+=0.1;
+                    }else if(e.deltaY>0&& scaleFactor>0.1){
+                        console.log("bye");
+                        scaleFactor-=0.1;
+                    }
+
+
                     render(points, colors);
                 });
-                canvas.addEventListener("onwheel" in document ? "wheel" : "mousewheel", function(e) {
-                    if(e.deltaY<0 && scale<10){
+                /*canvas.addEventListener("onwheel" in document ? "wheel" : "mousewheel", function(e) {
+
+                    if(e.deltaY<0 && scaleFactor<10){
+                        console.log("hi");
                         scaleFactor+=0.1;
-                    }else if(e.deltaY>0&& scale>0.1){
+                    }else if(e.deltaY>0&& scaleFactor>0.1){
+                        console.log("bye");
                         scaleFactor-=0.1;
                     }
                     render(points,colors);
-                });
+                });*/
 
 
                 render(points, colors);
