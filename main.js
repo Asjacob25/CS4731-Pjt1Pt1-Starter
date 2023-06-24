@@ -101,30 +101,40 @@ function main()
                             angle-=1;
                         }
                     }
-                    if(e.deltaY<0 && scaleFactor<10){
-                        console.log("hi");
-                        scaleFactor+=0.1;
-                    }else if(e.deltaY>0&& scaleFactor>0.1){
-                        console.log("bye");
-                        scaleFactor-=0.1;
-                    }
 
 
+
+                        if(event.shiftKey===true){
+                            console.log("shifting")
+                            if(e.deltaY<0 && scaleFactor<10){
+                                console.log("hi");
+                                scaleFactor+=0.1;
+                            }else if(e.deltaY>0&& scaleFactor>0.1){
+                                console.log("bye");
+                                scaleFactor-=0.1;
+                            }
+                        }
+
+
+
+                    gl.clear(gl.COLOR_BUFFER_BIT);
                     render(points, colors);
                 });
-                /*canvas.addEventListener("onwheel" in document ? "wheel" : "mousewheel", function(e) {
 
-                    if(e.deltaY<0 && scaleFactor<10){
-                        console.log("hi");
-                        scaleFactor+=0.1;
-                    }else if(e.deltaY>0&& scaleFactor>0.1){
-                        console.log("bye");
-                        scaleFactor-=0.1;
+
+                window.onkeypress = function(event) {
+                    var key = event.key;
+                    switch(key) {
+                        case 'r':
+                            gl.clearColor(255, 255, 255, 255);
+                            gl.clear(gl.COLOR_BUFFER_BIT);
+                            dragx=0;
+                            dragy=0;
+                            angle=0;
+                            scaleFactor=1;
+                            render(points, colors);
                     }
-                    render(points,colors);
-                });*/
-
-
+                }
                 render(points, colors);
             }
         });
